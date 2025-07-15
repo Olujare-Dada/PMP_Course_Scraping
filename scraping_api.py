@@ -8,7 +8,9 @@ from Gpt_Extractor import Gpt_Extractor
 from typing import Dict
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
+CORS(app, resources={r"/upload": {"origins": "*"}})
+
 
 # Supabase config
 SUPABASE_URL = os.getenv("DATABASE_URL")  # Or hardcode for testing
@@ -53,8 +55,10 @@ def _normalize_keys(questions, answers, options):
     new_options = dict(zip(answers.keys(), options.values()))
     return new_questions, answers, new_options
 
-@app.route("/upload", methods=["POST"])
+@app.route("/upload", methods=["POST", "OPTIONS"])
 def upload():
+    if request.method == "OPTIONS":
+        return "", 204
     milestone_id = request.form.get("milestone_id")
     uploaded_file = request.files["file"]
 
