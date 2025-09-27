@@ -42,6 +42,7 @@
     }
 
     input[type="number"],
+    input[type="text"],
     input[type="file"] {
       width: 100%;
       padding: 0.6rem;
@@ -52,9 +53,65 @@
     }
 
     input[type="number"]:focus,
+    input[type="text"]:focus,
     input[type="file"]:focus {
       border-color: #007BFF;
       outline: none;
+    }
+
+    .dropdown-container {
+      margin-bottom: 1.2rem;
+    }
+
+    .dropdown-toggle {
+      width: 100%;
+      background-color: #f8f9fa;
+      color: #333;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .dropdown-toggle:hover {
+      background-color: #e9ecef;
+    }
+
+    .dropdown-content {
+      display: none;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      margin-top: -1px;
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+    .dropdown-content label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .dropdown-content input[type="text"] {
+      margin-bottom: 1rem;
+    }
+
+    #dropdown-arrow {
+      transition: transform 0.3s ease;
+    }
+
+    #dropdown-arrow.rotated {
+      transform: rotate(180deg);
     }
 
     input[type="submit"] {
@@ -113,11 +170,18 @@
       <label for="milestone_id">Milestone ID:</label>
       <input type="number" name="milestone_id" id="milestone_id" required>
 
-      <label for="milestone_name">Milestone Name (optional):</label>
-      <input type="text" name="milestone_name" id="milestone_name" placeholder="Leave empty for auto-generated name">
+      <div class="dropdown-container">
+        <button type="button" class="dropdown-toggle" onclick="toggleDropdown()">
+          Advanced Options <span id="dropdown-arrow">▼</span>
+        </button>
+        <div class="dropdown-content" id="dropdown-content">
+          <label for="milestone_name">Milestone Name (optional):</label>
+          <input type="text" name="milestone_name" id="milestone_name" placeholder="Leave empty for auto-generated name">
 
-      <label for="milestone_description">Description (optional):</label>
-      <input type="text" name="milestone_description" id="milestone_description" placeholder="Leave empty for auto-generated description">
+          <label for="milestone_description">Description (optional):</label>
+          <input type="text" name="milestone_description" id="milestone_description" placeholder="Leave empty for auto-generated description">
+        </div>
+      </div>
 
       <label for="file">HTML File:</label>
       <input type="file" name="file" id="file" accept=".html" required>
@@ -130,6 +194,19 @@
   </div>
 
   <script>
+    function toggleDropdown() {
+      const dropdownContent = document.getElementById('dropdown-content');
+      const dropdownArrow = document.getElementById('dropdown-arrow');
+      
+      if (dropdownContent.classList.contains('show')) {
+        dropdownContent.classList.remove('show');
+        dropdownArrow.classList.remove('rotated');
+      } else {
+        dropdownContent.classList.add('show');
+        dropdownArrow.classList.add('rotated');
+      }
+    }
+
     const form = document.getElementById('uploadForm');
     const messageBox = document.getElementById('responseMessage');
     const spinner = document.getElementById('spinner');
