@@ -97,5 +97,6 @@ def upload():
         return f"Upload failed: {response.text}", 500
 
 if __name__ == "__main__":
+    # Only run development server if not using WSGI
     port = int(os.environ.get("PORT", 5222))
     app.run(host="0.0.0.0", port=port, debug=False)
