@@ -60,6 +60,8 @@ def upload():
     if request.method == "OPTIONS":
         return "", 204
     milestone_id = request.form.get("milestone_id")
+    milestone_name = request.form.get("milestone_name", "").strip()
+    milestone_description = request.form.get("milestone_description", "").strip()
     uploaded_file = request.files["file"]
 
     html_file, response_code = _check_file(milestone_id, uploaded_file)
@@ -79,6 +81,29 @@ def upload():
         "Content-Type": "application/json"
     }
 
+    # First, ensure the milestone exists
+    # Use provided names or generate defaults
+    name = milestone_name if milestone_name else f"milestone_{milestone_id}"
+    description = milestone_description if milestone_description else f"description_{milestone_id}"
+    
+    milestone_data = {
+        "milestone_id": int(milestone_id),
+        "name": name,
+        "description": description,
+        "unlock_condition": '{"required_score":70}',
+        "estimated_completion_days": 10
+    }
+    
+    # Try to insert milestone (ignore if it already exists)
+    milestone_response = requests.post(f"{SUPABASE_URL}/rest/v1/milestones", 
+                                     headers=headers, 
+                                     json=milestone_data)
+    
+    # Continue even if milestone already exists (duplicate key error is OK)
+    if milestone_response.status_code not in (200, 201, 409):  # 409 = conflict (already exists)
+        return f"Failed to create milestone: {milestone_response.text}", 500
+
+    # Now insert the questions
     data = []
     for question_num in questions:
         data.append({
