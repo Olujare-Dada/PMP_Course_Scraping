@@ -21,6 +21,14 @@ SUPABASE_TABLE = "questions"
 def show_upload_form():
     return render_template("./scraping_front_end/index.html")
 
+@app.route("/ping")
+def ping():
+    return {"status": "ok", "message": "Service is running"}, 200
+
+@app.route("/health")
+def health_check():
+    return {"status": "healthy", "message": "API is operational", "service": "PMP Question Scraper"}, 200
+
 @app.route("/test")
 def show_quiz_page():
     return render_template("PMP_Qstn_BUCKET_1-1.html")
